@@ -3,7 +3,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -40,17 +39,27 @@ public class DealerTest {
 
     @Test
     public void generateReportTest() throws IOException {
+        // Deletes the file if it exists and then asserts that it does not exist
         File report = new File("report.txt");
         if (report.exists()) {
             FileUtils.forceDelete(new File("report.txt"));
         }
         Assert.assertFalse(report.exists());
 
+        // Fills the inventory with Vehicles, generates the report, the file should now exist
         fillInventory();
         dealer.generateReport(inv);
         Assert.assertTrue(report.exists());
 
+        // Scanner is used to read report.txt. The loop asserts that it equals the toString
         Scanner scan = new Scanner(report);
-        Assert.assertEquals(scan.nextLine() + "\n", inv.get(0).toString());
+        int size = 0;
+        while (scan.hasNextLine()) {
+            String line = scan.nextLine();
+            Assert.assertEquals(line + "\n", inv.get(size).toString());
+            System.out.println("Expected: " + line);
+            System.out.println("Actual: " + inv.get(size).toString());
+            size++;
+        }
     }
 }
